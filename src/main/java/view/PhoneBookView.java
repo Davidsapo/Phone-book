@@ -32,8 +32,8 @@ public class PhoneBookView extends JFrame {
 
     public PhoneBookView(PhoneBookController controller) {
         this.controller = controller;
-        initController();
         initComponents();
+        initController();
         setResizable(false);
     }
 

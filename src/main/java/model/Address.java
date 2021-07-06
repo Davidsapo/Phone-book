@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Address {
 
     private int id;
@@ -48,6 +50,12 @@ public class Address {
 
     public void setHouse_number(int house_number) {
         this.house_number = house_number;
+    }
+
+    public boolean equals(Address address) {
+        return house_number == address.house_number &&
+                city.equalsIgnoreCase(address.city) &&
+                street.equalsIgnoreCase(address.street);
     }
 
     @Override

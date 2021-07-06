@@ -14,7 +14,7 @@ public class AddressDAO {
 
     private static final String SQL_SELECT_ADDRESSES = "SELECT * FROM address;";
     private static final String SQL_ADD_ADDRESS = "INSERT INTO address (city, street, house_number) VALUES (?, ?, ?);";
-    private static final String SQL_GET_LAST_ADDRESS = "SELECT * FROM address id=(SELECT MAX(id) FROM address);";
+    private static final String SQL_GET_LAST_ADDRESS = "SELECT * FROM address WHERE id = (SELECT MAX(id) FROM address);";
 
     public ArrayList<Address> select() throws DataBaseException {
         ArrayList<Address> addresses = new ArrayList<>();
@@ -37,6 +37,7 @@ public class AddressDAO {
             statement.setInt(3, address.getHouse_number());
             statement.execute();
         } catch (SQLException exception) {
+            exception.printStackTrace();
             throw new DataBaseException("ADD", "address", exception);
         }
     }
@@ -48,6 +49,7 @@ public class AddressDAO {
             resultSet.next();
             return ResultSetConverter.convertAddress(resultSet);
         } catch (SQLException exception) {
+            exception.printStackTrace();
             throw new DataBaseException("GETLAST", "address", exception);
         }
     }

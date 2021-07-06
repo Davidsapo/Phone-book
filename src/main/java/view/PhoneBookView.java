@@ -3,6 +3,7 @@ package view;
 import controller.PhoneBookController;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 public class PhoneBookView extends JFrame {
 
@@ -12,16 +13,6 @@ public class PhoneBookView extends JFrame {
     private JButton deleteButton;
     private JButton editButton;
     private JTextField houseNumField;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JLabel jLabel5;
-    private JLabel jLabel6;
-    private JLabel jLabel7;
-    private JPanel jPanel1;
-    private JPanel jPanel2;
-    private JScrollPane jScrollPane1;
     private JTextField nameField;
     private JTextField phoneNumField;
     private JTextField streetField;
@@ -34,21 +25,22 @@ public class PhoneBookView extends JFrame {
         this.controller = controller;
         initComponents();
         initController();
-        setResizable(false);
     }
 
     private void initController() {
-        controller.setNameField(nameField);
-        controller.setSurnameField(surnameField);
-        controller.setPhoneNumField(phoneNumField);
-        controller.setCityField(cityField);
-        controller.setStreetField(streetField);
-        controller.setHouseNumField(houseNumField);
+        controller.nameField = nameField;
+        controller.surnameField = surnameField;
+        controller.phoneNumField = phoneNumField;
+        controller.cityField = cityField;
+        controller.streetField = streetField;
+        controller.houseNumField = houseNumField;
 
-        controller.setClearButton(clearButton);
-        controller.setDeleteButton(deleteButton);
-        controller.setEditButton(editButton);
-        controller.setAddButton(addButton);
+        controller.clearButton = clearButton;
+        controller.deleteButton = deleteButton;
+        controller.editButton = editButton;
+        controller.addButton = addButton;
+
+        controller.table = table;
 
         controller.initTableData();
         controller.initActionListeners();
@@ -56,21 +48,21 @@ public class PhoneBookView extends JFrame {
 
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        JPanel jPanel1 = new JPanel();
+        JPanel jPanel2 = new JPanel();
+        JLabel jLabel1 = new JLabel();
         addButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        JScrollPane jScrollPane1 = new JScrollPane();
         table = new javax.swing.JTable();
         deleteButton = new javax.swing.JButton();
         editButton = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
+        JLabel jLabel2 = new JLabel();
+        JLabel jLabel3 = new JLabel();
+        JLabel jLabel4 = new JLabel();
+        JLabel jLabel5 = new JLabel();
+        JLabel jLabel6 = new JLabel();
+        JLabel jLabel7 = new JLabel();
         houseNumField = new javax.swing.JTextField();
         streetField = new javax.swing.JTextField();
         cityField = new javax.swing.JTextField();
@@ -119,13 +111,10 @@ public class PhoneBookView extends JFrame {
         clearButton.setFocusable(false);
 
         table.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 18)); // NOI18N
-        table.setModel(new javax.swing.table.DefaultTableModel(
-                new Object [][] {
-                        {"David", "Szapozhnik", "0967442864", "Kiev", "-", "6"}
-                },
+        table.setModel(new DefaultTableModel(
                 new String [] {
-                        "Name", "Surname", "Phone numder", "City", "Street", "House number"
-                }
+                        "Name", "Surname", "Phone number", "City", "Street", "House number"
+                },0
         ));
         table.setRowHeight(30);
         jScrollPane1.setViewportView(table);
@@ -273,6 +262,8 @@ public class PhoneBookView extends JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
         pack();
         setLocationRelativeTo(null);
     }

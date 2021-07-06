@@ -17,6 +17,8 @@ public class ContactDAO {
     private static final String SQL_ADD_CONTACT = "INSERT INTO contacts (name, surname, phone_number, address_id) VALUES (?, ?, ?, ?);";
     private static final String SQL_DELETE_CONTACT = "DELETE FROM contacts WHERE id = ?;";
     private static final String SQL_UPDATE_CONTACT = "UPDATE contacts SET name=?, surname=?, phone_number=?, address_id=? WHERE id=?;";
+    private static final String SQL_GET_LAST_CONTACT = "SELECT * FROM contacts WHERE id = (SELECT MAX(id) FROM contacts);";
+
 
     public ArrayList<Contact> select() throws DataBaseException {
         ArrayList<Contact> contacts = new ArrayList<>();
@@ -40,6 +42,7 @@ public class ContactDAO {
             statement.setInt(4, contact.getAddress_id());
             statement.execute();
         } catch (SQLException exception) {
+            exception.printStackTrace();
             throw new DataBaseException("ADD", "contacts", exception);
         }
     }
@@ -65,6 +68,18 @@ public class ContactDAO {
             statement.execute();
         } catch (SQLException exception) {
             throw new DataBaseException("DELETE", "contacts", exception);
+        }
+    }
+
+    public Contact getLast() throws DataBaseException {
+        try (Connection connection = DBConnection.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SQL_GET_LAST_CONTACT);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+            return ResultSetConverter.convertContact(resultSet);
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+            throw new DataBaseException("GETLAST", "contacts", exception);
         }
     }
 }

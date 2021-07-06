@@ -7,6 +7,7 @@ public class Contact {
     private String surname;
     private String phoneNumber;
     private int address_id;
+    private Address address;
 
     public Contact(String name, String surname, String phoneNumber) {
         this.name = name;
@@ -58,6 +59,18 @@ public class Contact {
 
     public void setAddress_id(int address_id) {
         this.address_id = address_id;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
+    public String[] getTableInfo() {
+        return new String[]{name, surname, phoneNumber, address.getCity(), address.getStreet(), String.valueOf(address.getHouse_number())};
     }
 
     @Override

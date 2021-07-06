@@ -1,6 +1,7 @@
 package controller;
 
 import dao.ContactDAO;
+import model.Address;
 import model.Contact;
 import utils.ContactValidator;
 
@@ -16,7 +17,9 @@ public class PhoneBookController {
     private JButton clearButton, deleteButton, editButton, addButton;
 
     private final List<Contact> contacts = new ArrayList<>();
+    private final List<Address> addresses = new ArrayList<>();
     private Contact selectedContact = null;
+    private Address selectedAddress = null;
 
     private final ContactDAO contactDAO = new ContactDAO();
     private final ContactValidator contactValidator = new ContactValidator();

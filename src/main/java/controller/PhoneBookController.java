@@ -3,6 +3,7 @@ package controller;
 import dao.AddressDAO;
 import dao.ContactDAO;
 import exceptions.DataBaseException;
+import exceptions.ValidatorException;
 import model.Address;
 import model.Contact;
 import utils.Validator;
@@ -64,45 +65,39 @@ public class PhoneBookController {
             showMessage("Press clear button first!");
             return;
         }
-        Contact newContact = new Contact(nameField.getText().trim(), surnameField.getText().trim(), phoneNumField.getText().trim());
+
+        Contact newContact;
         Address contactAdders;
         try {
-            contactAdders = new Address(cityField.getText().trim(), streetField.getText().trim(), Integer.parseInt(houseNumField.getText().trim()));
-        } catch (NumberFormatException e) {
-            showMessage("House number must be integer!");
+            newContact = validator.validContact(nameField.getText(), surnameField.getText(),phoneNumField.getText(), contacts);
+            contactAdders = validator.validAddress(cityField.getText(),streetField.getText(), houseNumField.getText());
+        } catch (ValidatorException e) {
+            showMessage(e.getMessage());
             return;
         }
-        if (!validator.validContact(newContact) || !validator.validAddress(contactAdders)) {
-            showMessage("Illegal input!");
-            return;
-        }
-        for (Contact contact : contacts) {
-            if (contact.getPhoneNumber().equals(newContact.getPhoneNumber().trim())) {
-                showMessage("Such phone number is already exists!");
-                return;
-            }
-        }
-        boolean addNewAddress = true;
-        for (Address address : addresses) {
-            if (address.equals(contactAdders)) {
-                contactAdders = address;
-                addNewAddress = false;
-                break;
-            }
-        }
-        if (addNewAddress) {
-            addressDAO.add(contactAdders);
-            contactAdders = addressDAO.getLast();
-            addresses.add(contactAdders);
-        }
+
+        contactAdders = searchOrAddNewAddress(contactAdders);
+
         newContact.setAddress_id(contactAdders.getId());
         contactDAO.add(newContact);
         newContact = contactDAO.getLast();
         newContact.setAddress(contactAdders);
         contacts.add(newContact);
+
         clearFields();
         table.revalidate();
         showMessage("Contact successfully added.");
+    }
+
+    private Address searchOrAddNewAddress(Address newAddress) throws DataBaseException {
+        for (Address address : addresses) {
+            if (address.equals(newAddress))
+                return address;
+        }
+        addressDAO.add(newAddress);
+        newAddress = addressDAO.getLast();
+        addresses.add(newAddress);
+        return newAddress;
     }
 
     private void editContact() {

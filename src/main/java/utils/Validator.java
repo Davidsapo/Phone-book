@@ -8,12 +8,16 @@ import java.util.List;
 
 public class Validator {
 
+    private static final String PHONE_NUMBER_PATTERN = "^0\\d{2} ?\\d{3} ?\\d{2} ?\\d{2}$";
+
     public Contact validContact(String name, String surname, String phoneNumber, List<Contact> contactList) throws ValidatorException {
         name = name.trim();
         surname = surname.trim();
         phoneNumber = phoneNumber.trim();
         if (name.isEmpty() || surname.isEmpty() || phoneNumber.isEmpty())
             throw new ValidatorException("Empty fields!");
+        if (!phoneNumber.matches(PHONE_NUMBER_PATTERN))
+            throw new ValidatorException("Invalid phone number!\nPattern: 0XX XXX XX XX or 0XXXXXXXXX");
         for (Contact existingContact : contactList) {
             if (existingContact.getPhoneNumber().equals(phoneNumber))
                 throw new ValidatorException("Such phone number is already exists!");

@@ -14,7 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
+import java.util.ArrayList;
 
 public class PhoneBookController {
 
@@ -26,8 +26,8 @@ public class PhoneBookController {
     private final AddressDAO addressDAO = new AddressDAO();
     private final Validator validator = new Validator();
 
-    private List<Contact> contacts;
-    private List<Address> addresses;
+    private ArrayList<Contact> contacts;
+    private ArrayList<Address> addresses;
     private Contact selectedContact = null;
 
     public void initTableData() {
@@ -53,55 +53,49 @@ public class PhoneBookController {
         editButton.addActionListener(actionListener);
         addButton.addActionListener(actionListener);
         table.addMouseListener(new MouseAdapter() {
-            @Override
             public void mouseClicked(MouseEvent e) {
                 setSelectedContact(contacts.get(table.getSelectedRow()));
             }
         });
     }
 
-    private void addContact() throws DataBaseException {
+    private void addContact() throws DataBaseException, ValidatorException {
         if (selectedContact != null) {
             showMessage("Press clear button first!");
             return;
         }
-
-        Contact newContact;
-        Address contactAdders;
-        try {
-            newContact = validator.validContact(nameField.getText(), surnameField.getText(),phoneNumField.getText(), contacts);
-            contactAdders = validator.validAddress(cityField.getText(),streetField.getText(), houseNumField.getText());
-        } catch (ValidatorException e) {
-            showMessage(e.getMessage());
-            return;
-        }
+        Contact newContact = validator.validContact(nameField.getText(), surnameField.getText(),phoneNumField.getText(), contacts);
+        Address contactAdders = validator.validAddress(cityField.getText(),streetField.getText(), houseNumField.getText());
 
         contactAdders = searchOrAddNewAddress(contactAdders);
-
         newContact.setAddress_id(contactAdders.getId());
         contactDAO.add(newContact);
         newContact = contactDAO.getLast();
         newContact.setAddress(contactAdders);
         contacts.add(newContact);
-
         clearFields();
         table.revalidate();
         showMessage("Contact successfully added.");
     }
 
-    private Address searchOrAddNewAddress(Address newAddress) throws DataBaseException {
-        for (Address address : addresses) {
-            if (address.equals(newAddress))
-                return address;
+    private void editContact() throws ValidatorException, DataBaseException {
+        if (selectedContact == null){
+            showMessage("Select the contact!");
+            return;
         }
-        addressDAO.add(newAddress);
-        newAddress = addressDAO.getLast();
-        addresses.add(newAddress);
-        return newAddress;
-    }
+        ArrayList<Contact> withoutSelected = (ArrayList<Contact>) contacts.clone();
+        withoutSelected.remove(selectedContact);
+        Contact editedContact = validator.validContact(nameField.getText(), surnameField.getText(), phoneNumField.getText(), withoutSelected);
+        Address editedAddress = validator.validAddress(cityField.getText(), streetField.getText(),houseNumField.getText());
 
-    private void editContact() {
-
+        editedAddress = searchOrAddNewAddress(editedAddress);
+        editedContact.setId(selectedContact.getId());
+        editedContact.setAddress(editedAddress);
+        editedContact.setAddress_id(editedAddress.getId());
+        contactDAO.update(editedContact);
+        contacts.set(contacts.indexOf(selectedContact), editedContact);
+        clear();
+        showMessage("Contact successfully updated.");
     }
 
     private void deleteContact() throws DataBaseException {
@@ -126,8 +120,15 @@ public class PhoneBookController {
         houseNumField.setText(String.valueOf(contact.getAddress().getHouse_number()));
     }
 
-    private void showMessage(String message) {
-        JOptionPane.showMessageDialog(null, message);
+    private Address searchOrAddNewAddress(Address newAddress) throws DataBaseException {
+        for (Address address : addresses) {
+            if (address.equals(newAddress))
+                return address;
+        }
+        addressDAO.add(newAddress);
+        newAddress = addressDAO.getLast();
+        addresses.add(newAddress);
+        return newAddress;
     }
 
     private void clearFields() {
@@ -145,6 +146,10 @@ public class PhoneBookController {
         table.setModel(new ContactTableModel());
     }
 
+    private void showMessage(String message) {
+        JOptionPane.showMessageDialog(null, message);
+    }
+
     private class PhoneBookActionListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -157,8 +162,8 @@ public class PhoneBookController {
                     editContact();
                 else if (e.getSource() == addButton)
                     addContact();
-            } catch (DataBaseException dataBaseException) {
-                JOptionPane.showMessageDialog(null, dataBaseException.getMessage());
+            } catch (DataBaseException | ValidatorException exception) {
+                JOptionPane.showMessageDialog(null, exception.getMessage());
             }
         }
     }
@@ -175,6 +180,11 @@ public class PhoneBookController {
         @Override
         public int getColumnCount() {
             return 6;
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
         }
 
         @Override

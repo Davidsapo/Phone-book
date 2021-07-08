@@ -6,3 +6,4 @@ A simple phone book application, where you can add, delete or update contact inf
 * JDBC
 * Maven
 * SQLite
+* JUnit

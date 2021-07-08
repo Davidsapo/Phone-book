@@ -52,10 +52,26 @@ public class Address {
         this.house_number = house_number;
     }
 
-    public boolean equals(Address address) {
+    public boolean equalsWith(Address address) {
         return house_number == address.house_number &&
                 city.equalsIgnoreCase(address.city) &&
                 street.equalsIgnoreCase(address.street);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return id == address.id &&
+                house_number == address.house_number &&
+                Objects.equals(city, address.city) &&
+                Objects.equals(street, address.street);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, city, street, house_number);
     }
 
     @Override

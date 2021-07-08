@@ -19,7 +19,6 @@ public class ContactDAO {
     private static final String SQL_UPDATE_CONTACT = "UPDATE contacts SET name=?, surname=?, phone_number=?, address_id=? WHERE id=?;";
     private static final String SQL_GET_LAST_CONTACT = "SELECT * FROM contacts WHERE id = (SELECT MAX(id) FROM contacts);";
 
-
     public ArrayList<Contact> select() throws DataBaseException {
         ArrayList<Contact> contacts = new ArrayList<>();
         try (Connection connection = DBConnection.getConnection()) {

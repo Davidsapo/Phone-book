@@ -122,7 +122,7 @@ public class PhoneBookController {
 
     private Address searchOrAddNewAddress(Address newAddress) throws DataBaseException {
         for (Address address : addresses) {
-            if (address.equals(newAddress))
+            if (address.equalsWith(newAddress))
                 return address;
         }
         addressDAO.add(newAddress);

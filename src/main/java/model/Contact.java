@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Objects;
+
 public class Contact {
 
     private int id;
@@ -71,6 +73,23 @@ public class Contact {
 
     public String[] getTableInfo() {
         return new String[]{name, surname, phoneNumber, address.getCity(), address.getStreet(), String.valueOf(address.getHouse_number())};
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return id == contact.id &&
+                address_id == contact.address_id &&
+                Objects.equals(name, contact.name) &&
+                Objects.equals(surname, contact.surname) &&
+                Objects.equals(phoneNumber, contact.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, phoneNumber, address_id);
     }
 
     @Override

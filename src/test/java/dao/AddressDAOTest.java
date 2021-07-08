@@ -2,15 +2,12 @@ package dao;
 
 import exceptions.DataBaseException;
 import model.Address;
-import model.Contact;
 import org.junit.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import static org.junit.Assert.*;
 
 public class AddressDAOTest {
 
